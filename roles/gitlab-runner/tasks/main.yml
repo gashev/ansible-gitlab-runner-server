@@ -1,2 +1,23 @@
-- name: Install git package
+- name: Install git package.
   package: name=git state=present
+
+- name: Create gitlab-runner group
+  group:
+    name: gitlab-runner
+    state: present
+
+- name: Add the user 'gitlab-runner' with a bash shell, appending to the group 'docker'
+  user:
+    name: gitlab-runner
+    comment: GitLab Runner
+    shell: /bin/bash
+    group: gitlab-runner
+    groups: docker
+    append: True
+    create_home: True
+
+- name: Download gitlab-runner.
+  get_url:
+    url: https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
+    dest: /usr/bin/gitlab-runner
+    mode: '0755'
