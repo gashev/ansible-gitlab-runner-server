@@ -21,3 +21,27 @@
     url: https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
     dest: /usr/bin/gitlab-runner
     mode: '0755'
+
+- name: Install epel-release package.
+  package: name=epel-release state=present
+
+- name: Install python-pip package.
+  package: name=python-pip state=present
+
+- pip:
+    name: python-gitlab
+
+- pip:
+    name: requests
+
+- name: Register runner.
+  gitlab_runner:
+    url: "{{ api_url }}"
+    api_token: "{{ api_token }}"
+    description: "{{ description }}"
+    registration_token: "{{ token }}"
+    state: present
+    active: True
+    tag_list: ["{{ tag }}"]
+    run_untagged: False
+    locked: False
